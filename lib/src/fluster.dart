@@ -87,6 +87,7 @@ class Fluster<T> {
     // final east = bbox.east;
     // final north = bbox.north;
 
+    zoom += 1;
     var minLng = ((west + 180) % 360 + 360) % 360 - 180;
     var minLat = math.max<double>(-90, math.min(90, south));
     var maxLng = east == 180 ? 180.0 : ((east + 180) % 360 + 360) % 360 - 180;

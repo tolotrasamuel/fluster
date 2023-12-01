@@ -53,7 +53,6 @@ void main() {
       ),
       latitude: latitude,
       longitude: longitude,
-      isCluster: true,
       clusterId: cluster.id,
       pointsSize: cluster.pointsSize,
       markerId: cluster.id.toString(),

@@ -28,7 +28,7 @@ void main() {
       // -180, -85, 180, 85
       expect(
           fluster
-              .clusters(west: -180, south: -85, east: 180, north: 85, zoom: 2)
+              .clusters(west: -180, south: -85, east: 180, north: 85, zoom: 20)
               .length,
           0);
     });

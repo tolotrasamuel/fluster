@@ -12,10 +12,11 @@ class ClusterableWithId<T> extends ClusterableWithData<T> {
     required super.longitude,
     required super.data,
     super.markerId,
-    super.isCluster,
     super.pointsSize,
     super.childMarkerId,
-  });
+  }) : super(
+          isCluster: true,
+        );
 }
 
 abstract class ClusterableWithData<T> extends Clusterable {
