@@ -27,8 +27,9 @@ void main() {
     test('Empty Set Test', () {
       // -180, -85, 180, 85
       expect(
-          fluster.clusters(
-              (west: -180, south: -85, east: 180, north: 85), 2).length,
+          fluster
+              .clusters(west: -180, south: -85, east: 180, north: 85, zoom: 2)
+              .length,
           0);
     });
   });

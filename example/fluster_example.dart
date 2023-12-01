@@ -49,8 +49,8 @@ void main() {
               childMarkerId: cluster.childMarkerId));
 
   // [-180, -85, 180, 85]
-  var clusters = fluster
-      .clusters((west: -180, south: -85, east: 180, north: 85), currentZoom);
+  var clusters = fluster.clusters(
+      west: -180, south: -85, east: 180, north: 85, zoom: currentZoom);
 
   print('Number of clusters at zoom $currentZoom: ${clusters.length}');
 }
