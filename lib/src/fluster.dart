@@ -54,10 +54,6 @@ class Fluster<T extends Clusterable> {
     var clusters = <BaseCluster>[];
 
     for (var i = 0; i < _points.length; i++) {
-      if (_points[i].latitude == null || _points[i].longitude == null) {
-        continue;
-      }
-
       clusters.add(_createPointCluster(_points[i], i));
     }
 
@@ -107,7 +103,10 @@ class Fluster<T extends Clusterable> {
       return easternHemisphere;
     }
 
-    var tree = _trees[_limitZoom(zoom)]!;
+    var tree = _trees[_limitZoom(zoom)];
+    if (tree == null) {
+      throw Exception('Invalid tree. Contact package maintainer.');
+    }
     final ids =
         tree.range(_lngX(minLng), _latY(maxLat), _lngX(maxLng), _latY(minLat));
 
@@ -115,10 +114,7 @@ class Fluster<T extends Clusterable> {
 
     for (var id in ids) {
       var c = tree.points[id];
-
-      result.add((c.pointsSize != null && c.pointsSize! > 0)
-          ? _createCluster(c, _xLng(c.x), _yLat(c.y))
-          : _points[c.index!]);
+      result.add(_getPointResult(c));
     }
 
     return result;
@@ -145,20 +141,30 @@ class Fluster<T extends Clusterable> {
     var origin = index.points[originId];
 
     var r = radius / (extent * math.pow(2, originZoom - 1));
-    List<int?> ids = index.within(origin.x, origin.y, r);
+    final ids = index.within(origin.x, origin.y, r);
 
     var children = <T>[];
     for (var id in ids) {
-      var c = index.points[id!];
+      var c = index.points[id];
 
       if (c.parentId == clusterId) {
-        children.add((c.pointsSize != null && c.pointsSize! > 0)
-            ? _createCluster(c, _xLng(c.x), _yLat(c.y))
-            : _points[c.index!]);
+        children.add(_getPointResult((c)));
       }
     }
 
     return children;
+  }
+
+  T _getPointResult(BaseCluster c) {
+    late final T ans;
+    final pointsSize = c.pointsSize;
+    if (pointsSize != null && pointsSize > 0) {
+      ans = _createCluster(c, _xLng(c.x), _yLat(c.y));
+    } else {
+      if (c is! PointCluster) throw Exception('c is not PointCluster');
+      ans = _points[c.index];
+    }
+    return ans;
   }
 
   /// Returns a list of standalone points (not clusters) that are children of
@@ -179,7 +185,7 @@ class Fluster<T extends Clusterable> {
       return;
     } else {
       for (var child in childList) {
-        if (child.isCluster!) {
+        if (child.isCluster) {
           _extractClusterPoints(child.clusterId, points);
         } else {
           points.add(child);
@@ -189,8 +195,8 @@ class Fluster<T extends Clusterable> {
   }
 
   PointCluster _createPointCluster(T feature, int id) {
-    var x = _lngX(feature.longitude!);
-    var y = _latY(feature.latitude!);
+    var x = _lngX(feature.longitude);
+    var y = _latY(feature.latitude);
 
     return PointCluster(
         x: x, y: y, zoom: 24, index: id, markerId: feature.markerId);

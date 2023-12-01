@@ -5,15 +5,16 @@
 import 'base_cluster.dart';
 
 class PointCluster extends BaseCluster {
+  @override
+  final int index;
   PointCluster({
     required super.x,
     required super.y,
     int? zoom,
-    int? index,
+    required this.index,
     String? markerId,
   }) {
     this.zoom = zoom;
-    this.index = index;
     this.markerId = markerId;
 
     parentId = -1;

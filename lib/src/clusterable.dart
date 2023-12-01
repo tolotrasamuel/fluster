@@ -5,14 +5,14 @@
 abstract class Clusterable {
   /// Either an individual data point's latitude or the center point latitude of
   /// a cluster's children.
-  double? latitude;
+  double latitude;
 
   /// Either an individual data point's longitude or the center point longitude
   /// of a cluster's children.
-  double? longitude;
+  double longitude;
 
   /// Denote that the instance is either a cluster or an individual data point.
-  bool? isCluster = false;
+  bool isCluster;
 
   /// Unique id for use in cluster algorithm indexing.
   int? clusterId;
@@ -28,12 +28,13 @@ abstract class Clusterable {
   /// Useful for representing a cluster by referencing one of its children.
   String? childMarkerId;
 
-  Clusterable(
-      {this.latitude,
-      this.longitude,
-      this.isCluster,
-      this.clusterId,
-      this.pointsSize,
-      this.markerId,
-      this.childMarkerId});
+  Clusterable({
+    required this.latitude,
+    required this.longitude,
+    this.isCluster = false,
+    this.clusterId,
+    this.pointsSize,
+    this.markerId,
+    this.childMarkerId,
+  });
 }
