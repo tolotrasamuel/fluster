@@ -3,50 +3,63 @@
  */
 
 import 'package:fluster/fluster.dart';
+import 'package:fluster/src/cluster.dart';
 
 void main() {
   const currentZoom = 10;
 
   var markers = <MapMarker>[
     MapMarker(
-        locationName: 'One',
+        data: MyData(
+          locationName: 'One',
+        ),
         markerId: '9000001',
         latitude: 40.736291,
         longitude: -73.990243),
     MapMarker(
-        locationName: 'Two',
+        data: MyData(
+          locationName: 'Two',
+        ),
         markerId: '9000002',
         latitude: 40.731349,
         longitude: -73.997723),
     MapMarker(
-        locationName: 'Three',
+        data: MyData(
+          locationName: 'Three',
+        ),
         markerId: '9000003',
         latitude: 40.670274,
         longitude: -73.964054),
     MapMarker(
-        locationName: 'Four',
+        data: MyData(
+          locationName: 'Four',
+        ),
         markerId: '9000004',
         latitude: 38.889974,
         longitude: -77.019908),
   ];
 
-  var fluster = Fluster<MapMarker>(
-      minZoom: 0,
-      maxZoom: 21,
-      radius: 150,
-      extent: 2048,
-      nodeSize: 64,
-      points: markers,
-      createCluster: (BaseCluster cluster, double longitude, double latitude) =>
-          MapMarker(
-              locationName: null,
-              latitude: latitude,
-              longitude: longitude,
-              isCluster: true,
-              clusterId: cluster.id,
-              pointsSize: cluster.pointsSize,
-              markerId: cluster.id.toString(),
-              childMarkerId: cluster.childMarkerId));
+  var fluster = Fluster<MyData>(
+    minZoom: 0,
+    maxZoom: 21,
+    radius: 150,
+    extent: 2048,
+    nodeSize: 64,
+    points: markers,
+    createCluster: (Cluster cluster, double longitude, double latitude) =>
+        ClusterableWithId(
+      data: MyData(
+        locationName: null,
+      ),
+      latitude: latitude,
+      longitude: longitude,
+      isCluster: true,
+      clusterId: cluster.id,
+      pointsSize: cluster.pointsSize,
+      markerId: cluster.id.toString(),
+      childMarkerId: cluster.childMarkerId,
+    ),
+  );
 
   // [-180, -85, 180, 85]
   var clusters = fluster.clusters(
@@ -55,26 +68,17 @@ void main() {
   print('Number of clusters at zoom $currentZoom: ${clusters.length}');
 }
 
-class MapMarker extends Clusterable {
+class MyData {
   String? locationName;
   String? thumbnailSrc;
 
+  MyData({this.locationName, this.thumbnailSrc});
+}
+
+class MapMarker extends ClusterableWithData<MyData> {
   MapMarker(
-      {this.locationName,
-      latitude,
-      longitude,
-      this.thumbnailSrc,
-      isCluster = false,
-      clusterId,
-      pointsSize,
-      markerId,
-      childMarkerId})
-      : super(
-            latitude: latitude,
-            longitude: longitude,
-            isCluster: isCluster,
-            clusterId: clusterId,
-            pointsSize: pointsSize,
-            markerId: markerId,
-            childMarkerId: childMarkerId);
+      {required super.latitude,
+      required super.longitude,
+      required super.data,
+      required super.markerId});
 }

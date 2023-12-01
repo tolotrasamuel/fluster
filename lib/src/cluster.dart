@@ -5,14 +5,15 @@
 import 'base_cluster.dart';
 
 class Cluster extends BaseCluster {
+  @override
+  final int id;
   Cluster({
     required super.x,
     required super.y,
-    int? id,
+    required this.id,
     int? pointsSize,
     String? childMarkerId,
   }) {
-    this.id = id;
     this.pointsSize = pointsSize;
     this.childMarkerId = childMarkerId;
 

@@ -2,6 +2,17 @@
  * Created by Alfonso Cejudo, Sunday, July 21st 2019.
  */
 
+// abstract class BaseClusterWithId extends BaseCluster {
+//   @override
+//   final int id;
+//
+//   BaseClusterWithId({
+//     required this.id,
+//     required super.x,
+//     required super.y,
+//   });
+// }
+
 abstract class BaseCluster {
   double x;
   double y;
@@ -19,7 +30,7 @@ abstract class BaseCluster {
   String? childMarkerId;
 
   BaseCluster({
-    required this.x,
     required this.y,
+    required this.x,
   });
 }

@@ -10,11 +10,11 @@ import 'clusterable.dart';
 import 'kd_bush.dart';
 import 'point_cluster.dart';
 
-typedef CreateCluster<T extends Clusterable> = T Function(
-    BaseCluster, double, double);
+typedef CreateCluster<T> = ClusterableWithId<T> Function(
+    Cluster, double, double);
 
 /// The List to be clustered must contain objects that conform to Clusterable.
-class Fluster<T extends Clusterable> {
+class Fluster<T> {
   /// Any zoom value below minZoom will not generate clusters.
   final int minZoom;
 
@@ -32,7 +32,7 @@ class Fluster<T extends Clusterable> {
   final int nodeSize;
 
   /// The List to be clustered.
-  final List<T> _points;
+  final List<ClusterableWithData<T>> _points;
 
   /// Store the clusters for each zoom level.
   final List<KDBush?> _trees;
@@ -46,7 +46,7 @@ class Fluster<T extends Clusterable> {
     required this.radius,
     required this.extent,
     required this.nodeSize,
-    required List<T> points,
+    required List<ClusterableWithData<T>> points,
     required CreateCluster<T> createCluster,
   })  : _points = points,
         _trees = List.filled(maxZoom + 2, null),
@@ -75,7 +75,7 @@ class Fluster<T extends Clusterable> {
   /// The list is comprised of the original points passed into the constructor
   /// or clusters of points (and perhaps other clusters) produced by
   /// createCluster().
-  List<T> clusters({
+  List<ClusterableWithData<T>> clusters({
     required double west,
     required double south,
     required double east,
@@ -115,7 +115,7 @@ class Fluster<T extends Clusterable> {
     final ids =
         tree.range(_lngX(minLng), _latY(maxLat), _lngX(maxLng), _latY(minLat));
 
-    var result = <T>[];
+    var result = <ClusterableWithData<T>>[];
 
     for (var id in ids) {
       var c = tree.points[id];
@@ -130,7 +130,7 @@ class Fluster<T extends Clusterable> {
   /// The list is comprised of the original points passed into the constructor
   /// or clusters of points (and perhaps other clusters) produced by
   /// createCluster().
-  List<T>? children(int? clusterId) {
+  List<ClusterableWithData<T>>? children(int? clusterId) {
     if (clusterId == null) {
       return null;
     }
@@ -148,22 +148,23 @@ class Fluster<T extends Clusterable> {
     var r = radius / (extent * math.pow(2, originZoom - 1));
     final ids = index.within(origin.x, origin.y, r);
 
-    var children = <T>[];
+    var children = <ClusterableWithData<T>>[];
     for (var id in ids) {
       var c = index.points[id];
 
       if (c.parentId == clusterId) {
-        children.add(_getPointResult((c)));
+        children.add(_getPointResult(c));
       }
     }
 
     return children;
   }
 
-  T _getPointResult(BaseCluster c) {
-    late final T ans;
+  ClusterableWithData<T> _getPointResult(BaseCluster c) {
+    late final ClusterableWithData<T> ans;
     final pointsSize = c.pointsSize;
     if (pointsSize != null && pointsSize > 0) {
+      if (c is! Cluster) throw Exception('c is not Cluster');
       ans = _createCluster(c, _xLng(c.x), _yLat(c.y));
     } else {
       if (c is! PointCluster) throw Exception('c is not PointCluster');
@@ -174,8 +175,8 @@ class Fluster<T extends Clusterable> {
 
   /// Returns a list of standalone points (not clusters) that are children of
   /// the given cluster.
-  List<T> points(int clusterId) {
-    var points = <T>[];
+  List<ClusterableWithData<T>> points(int clusterId) {
+    var points = <ClusterableWithData<T>>[];
 
     _extractClusterPoints(clusterId, points);
 
@@ -183,7 +184,8 @@ class Fluster<T extends Clusterable> {
   }
 
   /// Find the children that are individual media points, not other clusters.
-  void _extractClusterPoints(int? clusterId, List<T> points) {
+  void _extractClusterPoints(
+      int? clusterId, List<ClusterableWithData<T>> points) {
     var childList = children(clusterId);
 
     if (childList == null || childList.isEmpty) {
@@ -199,7 +201,7 @@ class Fluster<T extends Clusterable> {
     }
   }
 
-  PointCluster _createPointCluster(T feature, int id) {
+  PointCluster _createPointCluster(ClusterableWithData<T> feature, int id) {
     var x = _lngX(feature.longitude);
     var y = _latY(feature.latitude);
 

@@ -2,6 +2,36 @@
  * Created by Alfonso Cejudo, Wednesday, July 24th 2019.
  */
 
+class ClusterableWithId<T> extends ClusterableWithData<T> {
+  @override
+  final int clusterId;
+
+  ClusterableWithId({
+    required this.clusterId,
+    required super.latitude,
+    required super.longitude,
+    required super.data,
+    super.markerId,
+    super.isCluster,
+    super.pointsSize,
+    super.childMarkerId,
+  });
+}
+
+abstract class ClusterableWithData<T> extends Clusterable {
+  final T data;
+
+  ClusterableWithData({
+    required super.latitude,
+    required super.longitude,
+    required this.data,
+    super.markerId,
+    super.isCluster,
+    super.pointsSize,
+    super.childMarkerId,
+  });
+}
+
 abstract class Clusterable {
   /// Either an individual data point's latitude or the center point latitude of
   /// a cluster's children.
