@@ -10,6 +10,9 @@ import 'clusterable.dart';
 import 'kd_bush.dart';
 import 'point_cluster.dart';
 
+typedef CreateCluster<T extends Clusterable> = T Function(
+    BaseCluster, double, double);
+
 /// The List to be clustered must contain objects that conform to Clusterable.
 class Fluster<T extends Clusterable> {
   /// Any zoom value below minZoom will not generate clusters.
@@ -35,7 +38,7 @@ class Fluster<T extends Clusterable> {
   final List<KDBush?> _trees;
 
   /// A callback to generate clusters of the given input type.
-  final T Function(BaseCluster?, double?, double?)? _createCluster;
+  final CreateCluster<T> _createCluster;
 
   Fluster({
     required this.minZoom,
@@ -43,8 +46,8 @@ class Fluster<T extends Clusterable> {
     required this.radius,
     required this.extent,
     required this.nodeSize,
-    points,
-    createCluster,
+    required List<T> points,
+    required CreateCluster<T> createCluster,
   })  : _points = points,
         _trees = List.filled(maxZoom + 2, null),
         _createCluster = createCluster {
@@ -105,7 +108,7 @@ class Fluster<T extends Clusterable> {
       var c = tree.points[id!];
 
       result.add((c.pointsSize != null && c.pointsSize! > 0)
-          ? _createCluster!(c, _xLng(c.x!), _yLat(c.y!))
+          ? _createCluster(c, _xLng(c.x!), _yLat(c.y!))
           : _points[c.index!]);
     }
 
@@ -141,7 +144,7 @@ class Fluster<T extends Clusterable> {
 
       if (c.parentId == clusterId) {
         children.add((c.pointsSize != null && c.pointsSize! > 0)
-            ? _createCluster!(c, _xLng(c.x!), _yLat(c.y!))
+            ? _createCluster(c, _xLng(c.x!), _yLat(c.y!))
             : _points[c.index!]);
       }
     }

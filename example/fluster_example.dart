@@ -3,8 +3,6 @@
  */
 
 import 'package:fluster/fluster.dart';
-import 'package:fluster/src/base_cluster.dart';
-import 'package:fluster/src/clusterable.dart';
 
 void main() {
   const currentZoom = 10;

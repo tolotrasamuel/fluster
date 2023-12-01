@@ -2,10 +2,8 @@
  * Created by Alfonso Cejudo, Wednesday, July 24th 2019.
  */
 
-import 'package:test/test.dart';
-
 import 'package:fluster/fluster.dart';
-import 'package:fluster/src/clusterable.dart';
+import 'package:test/test.dart';
 
 import 'common.dart';
 
