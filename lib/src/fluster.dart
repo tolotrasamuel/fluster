@@ -79,19 +79,28 @@ class Fluster<T extends Clusterable> {
   /// The list is comprised of the original points passed into the constructor
   /// or clusters of points (and perhaps other clusters) produced by
   /// createCluster().
-  List<T> clusters(List<double> bbox, int zoom) {
-    var minLng = ((bbox[0] + 180) % 360 + 360) % 360 - 180;
-    var minLat = math.max<double>(-90, math.min(90, bbox[1]));
-    var maxLng =
-        bbox[2] == 180 ? 180.0 : ((bbox[2] + 180) % 360 + 360) % 360 - 180;
-    var maxLat = math.max<double>(-90, math.min(90, bbox[3]));
+  List<T> clusters(
+      ({double west, double south, double east, double north}) bbox, int zoom) {
+    final west = bbox.west;
+    final south = bbox.south;
+    final east = bbox.east;
+    final north = bbox.north;
 
-    if (bbox[2] - bbox[0] >= 360) {
+    var minLng = ((west + 180) % 360 + 360) % 360 - 180;
+    var minLat = math.max<double>(-90, math.min(90, south));
+    var maxLng = east == 180 ? 180.0 : ((east + 180) % 360 + 360) % 360 - 180;
+    var maxLat = math.max<double>(-90, math.min(90, north));
+
+    if (east - west >= 360) {
       minLng = -180;
       maxLng = 180.0;
     } else if (minLng > maxLng) {
-      var easternHemisphere = clusters([minLng, minLat, 180, maxLat], zoom);
-      var westernHemisphere = clusters([-180, minLat, maxLng, maxLat], zoom);
+      //minLng, minLat, 180, maxLat
+      var easternHemisphere = clusters(
+          (west: minLng, south: minLat, east: 180, north: maxLat), zoom);
+      // -180, minLat, maxLng, maxLat
+      var westernHemisphere = clusters(
+          (west: -180, south: minLat, east: maxLng, north: maxLat), zoom);
 
       easternHemisphere.addAll(westernHemisphere);
 
