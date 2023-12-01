@@ -22,8 +22,8 @@ class KDBush {
 
     for (var i = 0; i < points.length; i++) {
       ids[i] = i;
-      coordinates[i * 2] = points[i].x ?? 0.0;
-      coordinates[(i * 2) + 1] = points[i].y ?? 0.0;
+      coordinates[i * 2] = points[i].x;
+      coordinates[(i * 2) + 1] = points[i].y;
     }
 
     _sortKD(

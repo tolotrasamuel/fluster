@@ -2,9 +2,9 @@
  * Created by Alfonso Cejudo, Sunday, July 21st 2019.
  */
 
-class BaseCluster {
-  double? x;
-  double? y;
+abstract class BaseCluster {
+  double x;
+  double y;
   int? zoom;
   int? pointsSize;
   int? parentId;
@@ -17,4 +17,9 @@ class BaseCluster {
 
   /// For clusters that wish to display one representation of its children.
   String? childMarkerId;
+
+  BaseCluster({
+    required this.x,
+    required this.y,
+  });
 }

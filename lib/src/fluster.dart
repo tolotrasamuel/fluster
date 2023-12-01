@@ -99,16 +99,16 @@ class Fluster<T extends Clusterable> {
     }
 
     var tree = _trees[_limitZoom(zoom)]!;
-    List<int?> ids =
+    final ids =
         tree.range(_lngX(minLng), _latY(maxLat), _lngX(maxLng), _latY(minLat));
 
     var result = <T>[];
 
     for (var id in ids) {
-      var c = tree.points[id!];
+      var c = tree.points[id];
 
       result.add((c.pointsSize != null && c.pointsSize! > 0)
-          ? _createCluster(c, _xLng(c.x!), _yLat(c.y!))
+          ? _createCluster(c, _xLng(c.x), _yLat(c.y))
           : _points[c.index!]);
     }
 
@@ -136,7 +136,7 @@ class Fluster<T extends Clusterable> {
     var origin = index.points[originId];
 
     var r = radius / (extent * math.pow(2, originZoom - 1));
-    List<int?> ids = index.within(origin.x ?? 0.0, origin.y ?? 0.0, r);
+    List<int?> ids = index.within(origin.x, origin.y, r);
 
     var children = <T>[];
     for (var id in ids) {
@@ -144,7 +144,7 @@ class Fluster<T extends Clusterable> {
 
       if (c.parentId == clusterId) {
         children.add((c.pointsSize != null && c.pointsSize! > 0)
-            ? _createCluster(c, _xLng(c.x!), _yLat(c.y!))
+            ? _createCluster(c, _xLng(c.x), _yLat(c.y))
             : _points[c.index!]);
       }
     }
@@ -201,15 +201,15 @@ class Fluster<T extends Clusterable> {
       var tree = _trees[zoom + 1];
       var neighborIds = tree != null
           ? tree.within(
-              p.x ?? 0.0,
-              p.y ?? 0.0,
+              p.x,
+              p.y,
               r,
             )
           : [];
 
       var pointsSize = p.pointsSize ?? 1;
-      var wx = (p.x ?? 0.0) * pointsSize;
-      var wy = (p.y ?? 0.0) * pointsSize;
+      var wx = (p.x) * pointsSize;
+      var wy = (p.y) * pointsSize;
 
       var childMarkerId;
       if (p.childMarkerId != null) {
@@ -232,8 +232,8 @@ class Fluster<T extends Clusterable> {
         b.zoom = zoom;
 
         var pointsSize2 = b.pointsSize ?? 1;
-        wx += (b.x ?? 0.0) * pointsSize2;
-        wy += (b.y ?? 0.0) * pointsSize2;
+        wx += (b.x) * pointsSize2;
+        wy += (b.y) * pointsSize2;
 
         pointsSize += pointsSize2;
         b.parentId = id;
