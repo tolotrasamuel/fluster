@@ -6,20 +6,23 @@ class ClusterableWithId<T> extends ClusterableWithData<T> {
   @override
   final int clusterId;
 
+  @override
+  final int pointsSize;
+
   ClusterableWithId({
     required this.clusterId,
+    required this.pointsSize,
     required super.latitude,
     required super.longitude,
     required super.data,
     super.markerId,
-    super.pointsSize,
     super.childMarkerId,
   }) : super(
           isCluster: true,
         );
 }
 
-abstract class ClusterableWithData<T> extends Clusterable {
+class ClusterableWithData<T> extends Clusterable {
   final T data;
 
   ClusterableWithData({

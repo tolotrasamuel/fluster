@@ -46,18 +46,22 @@ void main() {
     extent: 2048,
     nodeSize: 64,
     points: markers,
-    createCluster: (Cluster cluster, double longitude, double latitude) =>
-        ClusterableWithId(
-      data: MyData(
+    createCluster: (Cluster cluster, double longitude, double latitude) {
+      return MyData(
         locationName: null,
-      ),
-      latitude: latitude,
-      longitude: longitude,
-      clusterId: cluster.id,
-      pointsSize: cluster.pointsSize,
-      markerId: cluster.id.toString(),
-      childMarkerId: cluster.childMarkerId,
-    ),
+      );
+    //     return ClusterableWithId(
+    //   data: MyData(
+    //     locationName: null,
+    //   ),
+    //   latitude: latitude,
+    //   longitude: longitude,
+    //   clusterId: cluster.id,
+    //   pointsSize: cluster.pointsSize,
+    //   markerId: cluster.id.toString(),
+    //   childMarkerId: cluster.childMarkerId,
+    // );
+    }
   );
 
   // [-180, -85, 180, 85]

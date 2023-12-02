@@ -10,7 +10,7 @@ import 'clusterable.dart';
 import 'kd_bush.dart';
 import 'point_cluster.dart';
 
-typedef CreateCluster<T> = ClusterableWithId<T> Function(
+typedef CreateCluster<T> = T Function(
     Cluster, double, double);
 
 /// The List to be clustered must contain objects that conform to Clusterable.
@@ -166,7 +166,7 @@ class Fluster<T> {
     final pointsSize = c.pointsSize;
     if (pointsSize != null && pointsSize > 0) {
       if (c is! Cluster) throw Exception('c is not Cluster');
-      ans = _createCluster(c, _xLng(c.x), _yLat(c.y));
+      ans = _tryCreateCluster(c, _xLng(c.x), _yLat(c.y));
     } else {
       if (c is! PointCluster) throw Exception('c is not PointCluster');
       ans = _points[c.index];
@@ -304,5 +304,18 @@ class Fluster<T> {
 
   int _limitZoom(int z) {
     return math.max(minZoom, math.min(z, maxZoom + 1));
+  }
+
+  ClusterableWithId<T> _tryCreateCluster(Cluster c, double xLng, double yLat) {
+    final data = _createCluster(c, xLng, yLat);
+    return ClusterableWithId<T>(
+      data: data,
+      latitude: yLat,
+      longitude: xLng,
+      clusterId: c.id,
+      pointsSize: c.pointsSize,
+      markerId: c.markerId,
+      childMarkerId: c.childMarkerId,
+    );
   }
 }
